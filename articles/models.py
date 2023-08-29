@@ -7,3 +7,9 @@ class Article(models.Model):
     content = models.TextField()
 
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
+class Comment(models.Model):
+    content = models.TextField()
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
