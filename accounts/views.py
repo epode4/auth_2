@@ -5,6 +5,9 @@ from django.contrib.auth import logout as auth_logout
 
 # Create your views here.
 def signup(request):
+    if request.user.is_authenticated:  # 물어보기 *^^*
+        return redirect('articles:index')
+    
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -16,15 +19,21 @@ def signup(request):
     context = {
         'form' : form
     }
-    return render(request, 'signup.html', context)
+    return render(request, 'accounts_form.html', context)
 
 def login(request):
+    if request.user.is_authenticated:  # 물어보기2 *^^*
+        return redirect('articles:index')
+    
     if request.method == 'POST':
         form = CustomAuthenticationForm(request, request.POST)
 
         if form.is_valid():
             auth_login(request, form.get_user())
-            return redirect('accounts:login')
+
+            next_url = request.GET.get('next')
+
+            return redirect( next_url or 'accounts:login')
     else:
         form = CustomAuthenticationForm()
 
@@ -32,7 +41,7 @@ def login(request):
         'form': form
     }
 
-    return render(request, 'login.html', context)
+    return render(request, 'accounts_form.html', context)
 
 def logout(request):
     auth_logout(request)
